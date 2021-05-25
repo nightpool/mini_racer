@@ -11,7 +11,7 @@ $CPPFLAGS += " -Wall" unless $CPPFLAGS.split.include? "-Wall"
 $CPPFLAGS += " -g" unless $CPPFLAGS.split.include? "-g"
 $CPPFLAGS += " -rdynamic" unless $CPPFLAGS.split.include? "-rdynamic"
 $CPPFLAGS += " -fPIC" unless $CPPFLAGS.split.include? "-rdynamic" or IS_DARWIN
-$CPPFLAGS += " -std=c++0x"
+$CPPFLAGS += " -std=c++14"
 $CPPFLAGS += " -fpermissive"
 $CPPFLAGS += " -DV8_COMPRESS_POINTERS"
 $CPPFLAGS += " -fvisibility=hidden "
@@ -29,24 +29,19 @@ if ENV['CXX']
   CONFIG['CXX'] = ENV['CXX']
 end
 
-CXX11_TEST = <<EOS
-#if __cplusplus <= 199711L
-#   error A compiler that supports at least C++11 is required in order to compile this project.
+CXX14_TEST = <<EOS
+#if __cplusplus < 201402L
+#   error A compiler that supports at least C++14 is required in order to compile this project.
 #endif
 EOS
 
-`echo "#{CXX11_TEST}" | #{CONFIG['CXX']} -std=c++0x -x c++ -E -`
+`echo "#{CXX14_TEST}" | #{CONFIG['CXX']} -std=c++14 -x c++ -E -`
 unless $?.success?
   warn <<EOS
 
 
-WARNING: C++11 support is required for compiling mini_racer. Please make sure
-you are using a compiler that supports at least C++11. Examples of such
-compilers are GCC 4.7+ and Clang 3.2+.
-
-If you are using Travis, consider either migrating your build to Ubuntu Trusty or
-installing GCC 4.8. See mini_racer's README.md for more information.
-
+WARNING: C++14 support is required for compiling mini_racer. Please make sure
+you are using a compiler that supports at least C++14.
 
 EOS
 end
